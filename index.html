@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h2>To Do List</h2>
+    
+    <label for="input">Enter new to do: </label>
+    <input type="text" class="input" id="input">
+    <button type="button" class="submit">submit</button>
+    <!-- <button type="button">cancel</button> -->
+    <div class="content">
+        <ul class="ul">
+            <li class="li">
+                <span>{{.}}</span>
+            </li>
+        </ul>
+    </div>
+    <script type="text/javascript">
+
+        var toDoList = {
+            listItems: []
+        }
+
+        const list = {
+            selectors: function(){
+                this.content = document.querySelector(".content");
+                this.input = document.querySelector(".input");
+                this.ul = document.querySelector(".ul");
+                this.li = document.querySelector(".li");
+                this.submitBtn = document.querySelector(".submit");
+            },
+            events: function(){
+                this.submitBtn.addEventListener('click', this.add.bind(this));
+                this.ul.addEventListener('click', this.delete.bind(this));
+                this.li.addEventListener('dblclick', this.edit.bind(this));
+            },
+            add: function(){
+                toDoList.listItems.push(this.input.value);
+                this.render();
+            },
+            deleteListener: function(){
+                for(let i = 0; i < toDoList.listItems.length; i++){
+                    document.querySelector(`.button-${i}`).addEventListener('click', () =>{
+                        this.delete(i);
+                    })
+                }
+            },
+            delete: function(i){
+                toDoList.listItems.splice(i, 1);
+                this.render();
+
+            },
+            editListener: function(){
+                for(let i = 0; i < toDoList.listItems.length; i++){
+                    document.querySelector(`.li-${i}`).addEventListener('dblclick', () => {
+                        // alert(i);
+                        this.edit(i);
+                    })
+                }
+            },
+            edit: function(index){
+                document.querySelector(`.input-${index}`).style.display = "block";
+                // this.render();
+                document.querySelector(`.input-${index}`).addEventListener('blur', () => {
+                    this.save(index);
+                })
+            },
+            save: function(index){
+                console.log(index);
+                let newInput = document.querySelector(`.input-${index}`).value;
+                console.log(newInput);
+                toDoList.listItems[index] = newInput;
+                this.render();
+            },
+            render: function(){
+                let string = ``;
+                string += `<div><ul>`;
+
+                for(let i = 0; i < toDoList.listItems.length; i++){
+                    string += `<li class="li-${i}">${toDoList.listItems[i]}</li>`;
+                    string += `<input class="input-${i}" type="text" style="display:none">`;
+                    string += `<button class="button-${i}"">button-${i}</button>`;
+                }
+                string += `</ul></div>`;
+                this.content.innerHTML = string;
+                this.editListener();
+                this.deleteListener();
+            },
+            init: function(){
+                this.selectors();
+                this.render();
+                this.events();
+            }
+        }
+        list.init();
+
+
+    </script>
+</body>
+</html>
